@@ -22,3 +22,26 @@ TODO: TOCを作成する
 - やらなくても良い
   - ブログ記事を生成するが、自動的なリリースはしない
     - 所感を記述したり、内容を精査してからリリースしたいため
+
+## Install
+
+TODO: インストール方法を記述する
+
+## Usage
+
+TODO: 使い方を記述する
+
+## Maintainer
+
+- u6k
+  - [u6k.Blog](https://blog.u6k.me/)
+  - [u6k - GitHub](https://github.com/u6k)
+  - [u6k_yu1 | Twitter](https://twitter.com/u6k_yu1)
+
+## Contribute
+
+このプロジェクトにご興味を持っていただき、ありがとうございます。素晴らしいアイデアをお持ちであれば、[work-report - u6k.Redmine](https://redmine.u6k.me/projects/work-report)にチケットを作成していただけると幸いです。
+
+## License
+
+[MIT License](https://github.com/u6k/work-report/blob/master/LICENSE)
