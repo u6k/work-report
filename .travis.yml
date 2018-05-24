@@ -1,0 +1,34 @@
+sudo: required
+language: ruby
+
+services:
+  - docker
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
+
+script:
+  - git clean -xdf
+  - mv .env.example .env
+  - docker build -t u6kapps/work-report -f Dockerfile.production .
+  - docker-compose -f docker-compose.production.yml up -d
+  - docker-compose -f docker-compose.production.yml exec app rails db:migrate
+  - docker-compose -f docker-compose.production.yml exec s3 mkdir /export/work-report
+  - docker-compose -f docker-compose.production.yml exec app rails test
+  - docker-compose -f docker-compose.production.yml down -v
+
+after_success:
+  - if [ -n "$TRAVIS_TAG" ]; then
+      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin;
+      docker tag u6kapps/work-report u6kapps/work-report:$TRAVIS_TAG;
+      docker push u6kapps/work-report;
+    else
+      echo skip docker push;
+    fi
+
+notifications:
+  slack:
+    secure: bHF8MvdRGpVjdkGrhdW1UbffPIIEH3+/NJtti0HcvquoIS6MWEhY3aJVU3VFXRqOp/SoULf3RwLhSKq/6I9WHdZTIw+vtvdKb0jdCzQCmyRRG0zF0QCPn3gkGFbhks7VNX71iBzZ8YnkkRHVqW5wk5IuDFBA+fUq2OmIFdDKsrTFNdKUUB/YByrLnxLYOizW6gOrK+tM4mFJacAabk3S/z8AEi6U71/5/uBrvXi27uNPXJSVJKwsiHT2DqeiAfTvM9qGxVny8j6xg8LoQHSvdJ7fJexRExwlkOuvDM7FpYJRTs380bGM2IXQmZJJW/hk/cDcN1AiINbIa2O7Sgn+oytL8kO3OxtYVTyo2zkwAtlUb+XcS7cu0a14d8KYkOSXO7L/X+nheFb/Yvu/m7b60Yab5w7f7CxqvaiEBq70zyC6E/2ZDG47aSh10NrxHVmxqzL4w/6KIN5VDaYvo2wEi0kl/Lw1h/o7Cd7mooZxCe4IpOOJBrMm5yvWP0AEKYtiQ/KMnVZOrko5Ii/hMHspxgGi0A8T1DJwVnZRKT3BMsD4cWNBbpLKLNrl1AFA2wXyQFdAkDb1YrHmPM7KNVcXPHs5UDWJqIo34oD+b4Cov1SfjNKaitNef+4RKANjvY0YRqggSp5a93sHPRyPSdyy1IieMI8mYLU3mPiPGuR2ay8=
