@@ -46,7 +46,8 @@ class RedmineActivityTest < ActiveSupport::TestCase
   end
 
   test "invalid model: updated empty" do
-    flunk
+    activity = RedmineActivity.new(entry_title: "updated - Redmine", entry_link: "http://example.redmine.com/issue/1#change=12345?page=1", entry_id: "aaa")
+    assert_not activity.valid?
   end
 
 end
