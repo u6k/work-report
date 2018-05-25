@@ -6,7 +6,9 @@ class RedmineActivity < ApplicationRecord
   validates :entry_updated, presence: true
 
   def self.download_redmine_activity_atom(url)
-    raise "TODO" # TODO
+    file_name = "redmine_activity.atom"
+
+    keys = NetModule.download_with_get(url, file_name)
   end
 
   def self.parse_redmine_activity_atom(s3_object_key)
