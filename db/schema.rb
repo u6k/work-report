@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2018_05_25_073305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "redmine_activities", force: :cascade do |t|
+    t.string "entry_title"
+    t.string "entry_link"
+    t.string "entry_id"
+    t.datetime "entry_updated"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
 end
