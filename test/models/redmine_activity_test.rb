@@ -3,7 +3,7 @@ require 'test_helper'
 class RedmineActivityTest < ActiveSupport::TestCase
 
   test "valid model" do
-    activity = RedmineActivity.new(entry_title: "updated - Redmine", entry_link: "http://example.redmine.com/issue/1", entry_id: "aaa", entry_updated: DateTime.strptime("2018-05-25T01:23:45Z"))
+    activity = RedmineActivity.new(entry_title: "updated - Redmine", entry_link: "http://example.redmine.com/issue/1#change=12345?page=1", entry_id: "aaa", entry_updated: DateTime.strptime("2018-05-25T01:23:45Z"))
     assert activity.valid?
   end
 
@@ -16,11 +16,16 @@ class RedmineActivityTest < ActiveSupport::TestCase
   end
 
   test "invalid model: link empty" do
-    flunk
+    activity = RedmineActivity.new(entry_title: "updated - Redmine", entry_id: "aaa", entry_updated: DateTime.strptime("2018-05-25T01:23:45Z"))
+    assert_not activity.valid?
+
+    activity = RedmineActivity.new(entry_title: "updated - Redmine", entry_link: " ", entry_id: "aaa", entry_updated: DateTime.strptime("2018-05-25T01:23:45Z"))
+    assert_not activity.valid?
   end
 
   test "invalid model: link format not url" do
-    flunk
+    activity = RedmineActivity.new(entry_title: "updated - Redmine", entry_link: "http", entry_id: "aaa", entry_updated: DateTime.strptime("2018-05-25T01:23:45Z"))
+    assert_not activity.valid?
   end
 
   test "invalid model: id empty" do
