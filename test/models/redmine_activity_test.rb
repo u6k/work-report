@@ -52,7 +52,8 @@ class RedmineActivityTest < ActiveSupport::TestCase
 
   test "download redmine activity atom" do
     # precondition
-    assert_not S3Module.get("redmine_activity.latest.atom").exists?
+    s3_bucket = NetModule.get_s3_bucket
+    assert_not s3_bucket.object("redmine_activity.latest.atom").exists?
     assert_equal 0, RedmineActivity.all.length
 
     # execute
@@ -64,8 +65,8 @@ class RedmineActivityTest < ActiveSupport::TestCase
     assert_equal "redmine_activity.latest.atom", s3_object_keys[:original]
     assert_match /^redmine_activity\.\d{8}_\d{6}\.atom$/, s3_object_keys[:backup]
 
-    assert S3Module.get(s3_object_keys[:original]).exists?
-    assert S3Module.get(s3_object_keys[:backup]).exists?
+    assert s3_bucket.object(s3_object_keys[:original]).exists?
+    assert s3_bucket.object(s3_object_keys[:backup]).exists?
 
     assert activities.length > 0
     assert_equal 0, RedmineActivity.all.length
@@ -73,7 +74,8 @@ class RedmineActivityTest < ActiveSupport::TestCase
 
   test "import redmine activity atom" do
     # setup
-    S3Module.get("redmine_activity.latest.atom").put(File.read("test/fixtures/files/redmine_activity.atom"))
+    s3_bucket = NetModule.get_s3_bucket
+    s3_bucket.object("redmine_activity.latest.atom").put(File.read("test/fixtures/files/redmine_activity.atom"))
 
     # precondition
     assert_equal 0, RedmineActivity.all.length
