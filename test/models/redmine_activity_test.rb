@@ -141,7 +141,7 @@ class RedmineActivityTest < ActiveSupport::TestCase
       RedmineActivity.new(entry_title: "ccc", entry_link: "http://example.redmine.com/issue/ccc", entry_id: "ccc", entry_updated: DateTime.parse("2018-01-03T015:13:23Z")),
       RedmineActivity.new(entry_title: "ddd", entry_link: "http://example.redmine.com/issue/ddd", entry_id: "ddd", entry_updated: DateTime.parse("2018-01-02T02:02:02Z")),
       RedmineActivity.new(entry_title: "eee", entry_link: "http://example.redmine.com/issue/eee", entry_id: "eee", entry_updated: DateTime.parse("2018-01-02T14:20:20Z")),
-      RedmineActivity.new(entry_title: "fff", entry_link: "http://example.redmine.com/issue/fff", entry_id: "fff", entry_updated: DateTime.parse("2018-01-01T06:06:06Z"))
+      RedmineActivity.new(entry_title: "fff", entry_link: "http://example.redmine.com/issue/fff", entry_id: "fff", entry_updated: DateTime.parse("2018-01-02T06:06:06Z"))
     ]
     RedmineActivity.import(activities)
 
