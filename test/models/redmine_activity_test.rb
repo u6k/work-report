@@ -90,12 +90,12 @@ class RedmineActivityTest < ActiveSupport::TestCase
     activity_ids = RedmineActivity.import(activities)
 
     # postcondition
-    assert_equal 0, activities.length
+    assert_equal 513, activities.length
     assert_equal activities.length, activity_ids.length
 
     activities.each do |activity|
       activity_actual = RedmineActivity.find_by(entry_id: activity.entry_id)
-      assert_same activity, activity_actual
+      assert_same_redmine_activity activity, activity_actual
     end
   end
 
@@ -129,11 +129,15 @@ class RedmineActivityTest < ActiveSupport::TestCase
     activities.each do |activity|
       activity_actual = RedmineActivity.find_by(entry_id: activity.entry_id)
 
-      assert_equal activity.entry_title, activity_actual.entry_title
-      assert_equal activity.entry_id, activity_actual.entry_id
-      assert_equal activity.entry_link, activity_actual.entry_link
-      assert_equal activity.entry_updated, activity_actual.entry_updated
+      assert_same_redmine_activity activity, activity_actual
     end
+  end
+
+  def assert_same_redmine_activity(expected, actual)
+    assert_equal expected.entry_title, actual.entry_title
+    assert_equal expected.entry_link, actual.entry_link
+    assert_equal expected.entry_id, actual.entry_id
+    assert_equal expected.entry_updated, actual.entry_updated
   end
 
 end

@@ -16,18 +16,21 @@ class RedmineActivity < ApplicationRecord
     atom = bucket.object(s3_object_key).get.body
 
     doc = Nokogiri::XML.parse(atom, nil, "UTF-8")
+    doc.remove_namespaces!
 
     entries = doc.xpath("/feed/entry")
 
     activities = entries.map do |entry|
       activity = RedmineActivity.new(
         entry_title: entry.xpath("title").text,
-        entry_link: entry.xpath("link").text,
+        entry_link: entry.xpath("link").first["href"],
         entry_id: entry.xpath("id").text,
-        entry_updated: DateTime.parse(entry.xpath("updated"))
+        entry_updated: DateTime.parse(entry.xpath("updated").text)
       )
 
       raise activity.errors.messages.to_s if activity.invalid?
+
+      activity
     end
   end
 
