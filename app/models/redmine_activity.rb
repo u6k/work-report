@@ -47,4 +47,12 @@ class RedmineActivity < ApplicationRecord
     activity_ids
   end
 
+  def self.count_redmine_activities_per_day
+    count_activities_result = RedmineActivity.find_by_sql("select date_trunc('day', entry_updated) as date, count(1) as count from redmine_activities group by date")
+
+    count_activities = count_activities_result.map do |count|
+      [count.date.strftime("%Y-%m-%d"), count.count]
+    end.to_h
+  end
+
 end
