@@ -2,6 +2,11 @@ require 'test_helper'
 
 class RedmineActivityTest < ActiveSupport::TestCase
 
+  def setup
+    bucket = NetModule.get_s3_bucket
+    bucket.objects.batch_delete!
+  end
+
   test "valid model" do
     activity = RedmineActivity.new(entry_title: "updated - Redmine", entry_link: "http://example.redmine.com/issue/1#change=12345?page=1", entry_id: "aaa", entry_updated: DateTime.strptime("2018-05-25T01:23:45Z"))
     assert activity.valid?
@@ -53,7 +58,7 @@ class RedmineActivityTest < ActiveSupport::TestCase
   test "download redmine activity atom" do
     # precondition
     s3_bucket = NetModule.get_s3_bucket
-    assert_not s3_bucket.object("redmine_activity.latest.atom").exists?
+    assert_not s3_bucket.object("redmine_activity.atom").exists?
     assert_equal 0, RedmineActivity.all.length
 
     # execute
@@ -62,8 +67,8 @@ class RedmineActivityTest < ActiveSupport::TestCase
     activities = RedmineActivity.parse_redmine_activity_atom(s3_object_keys[:original])
 
     # postcondition
-    assert_equal "redmine_activity.latest.atom", s3_object_keys[:original]
-    assert_match /^redmine_activity\.\d{8}_\d{6}\.atom$/, s3_object_keys[:backup]
+    assert_equal "redmine_activity.atom", s3_object_keys[:original]
+    assert_match /^redmine_activity\.atom\.bak_\d{8}_\d{6}$/, s3_object_keys[:backup]
 
     assert s3_bucket.object(s3_object_keys[:original]).exists?
     assert s3_bucket.object(s3_object_keys[:backup]).exists?
