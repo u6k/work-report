@@ -133,6 +133,32 @@ class RedmineActivityTest < ActiveSupport::TestCase
     end
   end
 
+  test "count redmine activities per day" do
+    # setup
+    activities = [
+      RedmineActivity.new(entry_title: "aaa", entry_link: "http://example.redmine.com/issue/aaa", entry_id: "aaa", entry_updated: DateTime.parse("2018-01-01T01:01:01Z")),
+      RedmineActivity.new(entry_title: "bbb", entry_link: "http://example.redmine.com/issue/bbb", entry_id: "bbb", entry_updated: DateTime.parse("2018-01-03T03:31:32Z")),
+      RedmineActivity.new(entry_title: "ccc", entry_link: "http://example.redmine.com/issue/ccc", entry_id: "ccc", entry_updated: DateTime.parse("2018-01-03T015:13:23Z")),
+      RedmineActivity.new(entry_title: "ddd", entry_link: "http://example.redmine.com/issue/ddd", entry_id: "ddd", entry_updated: DateTime.parse("2018-01-02T02:02:02Z")),
+      RedmineActivity.new(entry_title: "eee", entry_link: "http://example.redmine.com/issue/eee", entry_id: "eee", entry_updated: DateTime.parse("2018-01-02T14:20:20Z")),
+      RedmineActivity.new(entry_title: "fff", entry_link: "http://example.redmine.com/issue/fff", entry_id: "fff", entry_updated: DateTime.parse("2018-01-01T06:06:06Z"))
+    ]
+    RedmineActivity.import(activities)
+
+    # precondition
+    assert_equal 6, RedmineActivity.all.length
+
+    # execute
+    count_activities = RedmineActivity.count_redmine_activities_per_day
+
+    # postcondition
+    assert_equal 3, count_activities.length
+
+    assert_equal 1, count_activities["2018-01-01"]
+    assert_equal 3, count_activities["2018-01-02"]
+    assert_equal 2, count_activities["2018-01-03"]
+  end
+
   def assert_same_redmine_activity(expected, actual)
     assert_equal expected.entry_title, actual.entry_title
     assert_equal expected.entry_link, actual.entry_link

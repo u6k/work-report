@@ -47,4 +47,8 @@ class RedmineActivity < ApplicationRecord
     activity_ids
   end
 
+  def self.count_redmine_activities_per_day
+    raise "TODO" # TODO
+  end
+
 end
