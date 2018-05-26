@@ -68,7 +68,7 @@ class RedmineActivityTest < ActiveSupport::TestCase
 
     # postcondition
     assert_equal "redmine_activity.atom", s3_object_keys[:original]
-    assert_match /^redmine_activity\.atom\.bak_\d{8}_\d{6}$/, s3_object_keys[:backup]
+    assert_match /^redmine_activity\.atom\.bak_\d{14}$/, s3_object_keys[:backup]
 
     assert s3_bucket.object(s3_object_keys[:original]).exists?
     assert s3_bucket.object(s3_object_keys[:backup]).exists?
@@ -80,7 +80,7 @@ class RedmineActivityTest < ActiveSupport::TestCase
   test "import redmine activity atom" do
     # setup
     s3_bucket = NetModule.get_s3_bucket
-    s3_bucket.object("redmine_activity.latest.atom").put(File.read("test/fixtures/files/redmine_activity.atom"))
+    s3_bucket.object("redmine_activity.latest.atom").put(body: File.read("test/fixtures/files/redmine_activity.atom"))
 
     # precondition
     assert_equal 0, RedmineActivity.all.length
@@ -105,25 +105,34 @@ class RedmineActivityTest < ActiveSupport::TestCase
 
     # execute
     activities = [
-      RedmineActivity.new(entry_title: "aaa", entry_link: "http://example.redmine.com/issue/aaa", entry_id: "aaa", entry_updated: DateTime.current),
-      RedmineActivity.new(entry_title: "bbb", entry_link: "http://example.redmine.com/issue/bbb", entry_id: "bbb", entry_updated: DateTime.current),
-      RedmineActivity.new(entry_title: "ccc", entry_link: "http://example.redmine.com/issue/ccc", entry_id: "ccc", entry_updated: DateTime.current)
+      RedmineActivity.new(entry_title: "aaa", entry_link: "http://example.redmine.com/issue/aaa", entry_id: "aaa", entry_updated: DateTime.parse("2018-01-01T00:00:00Z")),
+      RedmineActivity.new(entry_title: "bbb", entry_link: "http://example.redmine.com/issue/bbb", entry_id: "bbb", entry_updated: DateTime.parse("2018-01-01T00:00:00Z")),
+      RedmineActivity.new(entry_title: "ccc", entry_link: "http://example.redmine.com/issue/ccc", entry_id: "ccc", entry_updated: DateTime.parse("2018-01-01T00:00:00Z"))
     ]
     activity_ids  = RedmineActivity.import(activities)
 
     assert_equal 3, activity_ids.length
     assert_equal 3, RedmineActivity.all.length
 
-    activities << RedmineActivity.new(entry_title: "ddd", entry_link: "http://example.redmine.com/issue/ddd", entry_id: "ddd", entry_updated: DateTime.current)
+    activities = [
+      RedmineActivity.new(entry_title: "aaa", entry_link: "http://example.redmine.com/issue/aaa", entry_id: "aaa", entry_updated: DateTime.parse("2018-01-01T00:00:00Z")),
+      RedmineActivity.new(entry_title: "bbb", entry_link: "http://example.redmine.com/issue/bbb", entry_id: "bbb", entry_updated: DateTime.parse("2018-01-01T00:00:00Z")),
+      RedmineActivity.new(entry_title: "ccc", entry_link: "http://example.redmine.com/issue/ccc", entry_id: "ccc", entry_updated: DateTime.parse("2018-01-01T00:00:00Z")),
+      RedmineActivity.new(entry_title: "ddd", entry_link: "http://example.redmine.com/issue/ddd", entry_id: "ddd", entry_updated: DateTime.parse("2018-01-01T00:00:00Z"))
+    ]
     activity_ids = RedmineActivity.import(activities)
 
     # postcondition
-    assert_equal 1, activity_ids
+    assert_equal 1, activity_ids.length
     assert_equal 4, RedmineActivity.all.length
 
     activities.each do |activity|
       activity_actual = RedmineActivity.find_by(entry_id: activity.entry_id)
-      assert_same activity, activity_actual
+
+      assert_equal activity.entry_title, activity_actual.entry_title
+      assert_equal activity.entry_id, activity_actual.entry_id
+      assert_equal activity.entry_link, activity_actual.entry_link
+      assert_equal activity.entry_updated, activity_actual.entry_updated
     end
   end
 

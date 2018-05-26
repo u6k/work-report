@@ -32,7 +32,16 @@ class RedmineActivity < ApplicationRecord
   end
 
   def self.import(redmine_activities)
-    raise "TODO" # TODO
+    activity_ids = []
+
+    redmine_activities.each do |activity|
+      if activity.valid?
+        activity.save!
+        activity_ids << activity.id
+      end
+    end
+
+    activity_ids
   end
 
 end
