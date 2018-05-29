@@ -5,13 +5,13 @@ class RedmineActivity < ApplicationRecord
   validates :entry_id, presence: true, uniqueness: true
   validates :entry_updated, presence: true
 
-  def self.download_redmine_activity_atom(url)
+  def self.download_atom(url)
     file_name = "redmine_activity.atom"
 
     keys = NetModule.download_with_get(url, file_name)
   end
 
-  def self.parse_redmine_activity_atom(s3_object_key)
+  def self.parse_atom(s3_object_key)
     bucket = NetModule.get_s3_bucket
     atom = bucket.object(s3_object_key).get.body
 
@@ -47,7 +47,7 @@ class RedmineActivity < ApplicationRecord
     activity_ids
   end
 
-  def self.count_redmine_activities_per_day
+  def self.count_per_day
     count_activities_result = RedmineActivity.find_by_sql("select date_trunc('day', entry_updated) as date, count(1) as count from redmine_activities group by date")
 
     count_activities = count_activities_result.map do |count|

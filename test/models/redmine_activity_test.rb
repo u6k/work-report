@@ -62,9 +62,9 @@ class RedmineActivityTest < ActiveSupport::TestCase
     assert_equal 0, RedmineActivity.all.length
 
     # execute
-    s3_object_keys = RedmineActivity.download_redmine_activity_atom("https://redmine.u6k.me/activity.atom?key=6c9b0fe50d9bdcc2e4da1215b7187aededf36652&user_id=5")
+    s3_object_keys = RedmineActivity.download_atom("https://redmine.u6k.me/activity.atom?key=6c9b0fe50d9bdcc2e4da1215b7187aededf36652&user_id=5")
 
-    activities = RedmineActivity.parse_redmine_activity_atom(s3_object_keys[:original])
+    activities = RedmineActivity.parse_atom(s3_object_keys[:original])
 
     # postcondition
     assert_equal "redmine_activity.atom", s3_object_keys[:original]
@@ -86,7 +86,7 @@ class RedmineActivityTest < ActiveSupport::TestCase
     assert_equal 0, RedmineActivity.all.length
 
     # execute
-    activities = RedmineActivity.parse_redmine_activity_atom("redmine_activity.latest.atom")
+    activities = RedmineActivity.parse_atom("redmine_activity.latest.atom")
     activity_ids = RedmineActivity.import(activities)
 
     # postcondition
@@ -149,7 +149,7 @@ class RedmineActivityTest < ActiveSupport::TestCase
     assert_equal 6, RedmineActivity.all.length
 
     # execute
-    count_activities = RedmineActivity.count_redmine_activities_per_day
+    count_activities = RedmineActivity.count_per_day
 
     # postcondition
     assert_equal 3, count_activities.length
