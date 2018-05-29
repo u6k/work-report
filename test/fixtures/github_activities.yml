@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  event_id: MyString
-  event_type: MyString
-  event_created: 2018-05-29 06:54:16
-  event_payload_size: 1
+#one:
+#  event_id: MyString
+#  event_type: MyString
+#  event_created: 2018-05-29 06:54:16
+#  event_payload_size: 1
 
-two:
-  event_id: MyString
-  event_type: MyString
-  event_created: 2018-05-29 06:54:16
-  event_payload_size: 1
+#two:
+#  event_id: MyString
+#  event_type: MyString
+#  event_created: 2018-05-29 06:54:16
+#  event_payload_size: 1
