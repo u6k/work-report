@@ -119,6 +119,29 @@ class GithubActivityTest < ActiveSupport::TestCase
     end
   end
 
+  test "count github activities per day" do
+    # setup
+    activities = [
+      GithubActivity.new(event_id: "1111111111", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:01:02Z"), event_payload_size: 1),
+      GithubActivity.new(event_id: "2222222222", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:02:02Z"), event_payload_size: 1),
+      GithubActivity.new(event_id: "3333333333", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:23:03Z"), event_payload_size: 3),
+      GithubActivity.new(event_id: "4444444444", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-30T21:34:45Z"), event_payload_size: 1)
+    ]
+    GithubActivity.import(activities)
+
+    # precondition
+    assert_equal 4, GithubActivity.all.length
+
+    # execute
+    count_activities = GithubActivity.count_per_day
+
+    # postcondition
+    assert_equal 2, count_activities.length
+
+    assert_equal 5, count_activities["2018-05-29"]
+    assert_equal 1, count_activities["2018-05-30"]
+  end
+
   def assert_same_github_activity(expected, actual)
     assert_equal expected.event_id, actual.event_id
     assert_equal expected.event_type, actual.event_type

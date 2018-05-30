@@ -51,4 +51,12 @@ class GithubActivity < ApplicationRecord
     activity_ids
   end
 
+  def self.count_per_day
+    count_activities_result = GithubActivity.find_by_sql("select date_trunc('day', event_created) as date, sum(event_payload_size) as count from github_activities group by date")
+
+    count_activities = count_activities_result.map do |count|
+      [count.date.strftime("%Y-%m-%d"), count.count]
+    end.to_h
+  end
+
 end
