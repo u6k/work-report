@@ -35,7 +35,12 @@ module NetModule
       obj_backup = bucket.object(file_name + ".bak_" + DateTime.now.strftime("%Y%m%d%H%M%S"))
       obj_backup.put(body: res.body)
 
-      keys = {original: obj_original.key, backup: obj_backup.key}
+      header = {}
+      res.each do |name, value|
+        header[name] = value
+      end
+
+      keys = {original: obj_original.key, backup: obj_backup.key, header: header}
     end
   end
 

@@ -64,6 +64,40 @@ class GithubActivityTest < ActiveSupport::TestCase
     assert_equal 0, GithubActivity.all.length
   end
 
+  test "download all github activity json" do
+    # precondition
+    s3_bucket = NetModule.get_s3_bucket
+    (1..10).each do |page_number|
+      assert_not s3_bucket.object("github_activity.page#{page_number}.json").exists?
+    end
+    assert_equal 0, GithubActivity.all.length
+
+    # execute
+    s3_object_keys_array = GithubActivity.download_json("u6k", true)
+
+    activities = []
+    s3_object_keys_array.each do |s3_object_keys|
+      activities += GithubActivity.parse_json(s3_object_keys[:original])
+    end
+
+    # postcondition
+    s3_object_keys_array.each do |s3_object_keys, index|
+      assert_match /^github_activity\.page\d{1,2}\.json$/, s3_object_keys[:original]
+      assert_match /^github_activity\.page\d{1,2}\.json\.bak_\d{14}$/, s3_object_keys[:backup]
+
+      assert s3_bucket.object(s3_object_keys[:original]).exists?
+      assert s3_bucket.object(s3_object_keys[:backup]).exists?
+    end
+
+    assert_equal 300, activities.length
+    assert_equal 0, GithubActivity.all.length
+
+    # import
+    GithubActivity.import(activities)
+
+    assert_equal 300, GithubActivity.all.length
+  end
+
   test "impoet github activity json" do
     # setup
     s3_bucket = NetModule.get_s3_bucket
