@@ -51,8 +51,10 @@ class GithubActivityTest < ActiveSupport::TestCase
     # execute
     s3_object_keys = GithubActivity.download_json("u6k", false)
 
+    activities = GithubActivity.parse_json(s3_object_keys[:original])
+
     # postcondition
-    assert_equal "github_activitjson", s3_object_keys[:original]
+    assert_equal "github_activity.json", s3_object_keys[:original]
     assert_match /^github_activity\.json\.bak_\d{14}$/, s3_object_keys[:backup]
 
     assert s3_bucket.object(s3_object_keys[:original]).exists?
