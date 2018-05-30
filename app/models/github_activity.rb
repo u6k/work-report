@@ -47,6 +47,8 @@ class GithubActivity < ApplicationRecord
         activity_ids << activity.id
       end
     end
+
+    activity_ids
   end
 
 end

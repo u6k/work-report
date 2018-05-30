@@ -86,6 +86,39 @@ class GithubActivityTest < ActiveSupport::TestCase
     end
   end
 
+  test "import duplicate redmine activity" do
+    # precondition
+    assert_equal 0, GithubActivity.all.length
+
+    # execute
+    activities = [
+      GithubActivity.new(event_id: "1111111111", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:01:02Z"), event_payload_size: 1),
+      GithubActivity.new(event_id: "2222222222", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:02:02Z"), event_payload_size: 1),
+      GithubActivity.new(event_id: "3333333333", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:23:03Z"), event_payload_size: 3)
+    ]
+    activity_ids = GithubActivity.import(activities)
+
+    assert_equal 3, activity_ids.length
+    assert_equal 3, GithubActivity.all.length
+
+    activities = [
+      GithubActivity.new(event_id: "1111111111", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:01:02Z"), event_payload_size: 1),
+      GithubActivity.new(event_id: "2222222222", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:02:02Z"), event_payload_size: 1),
+      GithubActivity.new(event_id: "3333333333", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-29T16:23:03Z"), event_payload_size: 3),
+      GithubActivity.new(event_id: "4444444444", event_type: "TestEvent", event_created: DateTime.strptime("2018-05-30T21:34:45Z"), event_payload_size: 1)
+    ]
+    activity_ids = GithubActivity.import(activities)
+
+    # postcondition
+    assert_equal 1, activity_ids.length
+    assert_equal 4, GithubActivity.all.length
+
+    activities.each do |activity|
+      activity_actual = GithubActivity.find_by(event_id: activity.event_id)
+      assert_same_github_activity activity, activity_actual
+    end
+  end
+
   def assert_same_github_activity(expected, actual)
     assert_equal expected.event_id, actual.event_id
     assert_equal expected.event_type, actual.event_type
