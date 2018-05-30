@@ -64,4 +64,33 @@ class GithubActivityTest < ActiveSupport::TestCase
     assert_equal 0, GithubActivity.all.length
   end
 
+  test "impoet github activity json" do
+    # setup
+    s3_bucket = NetModule.get_s3_bucket
+    s3_bucket.object("github_activity.json").put(body: File.read("test/fixtures/files/github_activity.json"))
+
+    # precondition
+    assert_equal 0, GithubActivity.all.length
+
+    # execute
+    activities = GithubActivity.parse_json("github_activity.json")
+    activity_ids = GithubActivity.import(activities)
+
+    # postcondition
+    assert_equal 30, activities.length
+    assert_equal activities.length, activity_ids.length
+
+    activities.each do |activity|
+      activity_actual = GithubActivity.find_by(event_id: activity.event_id)
+      assert_same_github_activity activity, activity_actual
+    end
+  end
+
+  def assert_same_github_activity(expected, actual)
+    assert_equal expected.event_id, actual.event_id
+    assert_equal expected.event_type, actual.event_type
+    assert_equal expected.event_created, actual.event_created
+    assert_equal expected.event_payload_size, actual.event_payload_size
+  end
+
 end

@@ -19,7 +19,34 @@ class GithubActivity < ApplicationRecord
     json = bucket.object(s3_object_key).get.body.read
 
     doc = JSON.parse(json)
-    puts doc.inspect # TODO
+
+    activities = doc.map do |event|
+      activity = GithubActivity.new(
+        event_id: event["id"],
+        event_type: event["type"],
+        event_created: DateTime.parse(event["created_at"]),
+        event_payload_size: 1
+      )
+
+      if activity.event_type == "PushEvent"
+        activity.event_payload_size = event["payload"]["size"]
+      end
+
+      raise activity.errors.messages.to_s if activity.invalid?
+
+      activity
+    end
+  end
+
+  def self.import(github_activities)
+    activity_ids = []
+
+    github_activities.each do |activity|
+      if activity.valid?
+        activity.save!
+        activity_ids << activity.id
+      end
+    end
   end
 
 end
