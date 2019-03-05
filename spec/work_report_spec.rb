@@ -55,11 +55,5 @@ RSpec.describe WorkReport do
       end
     end
   end
-
-  describe WorkReport::CLI do
-    it "hello" do
-      WorkReport::CLI.new.invoke(:github_commits, [], {github_user: ENV["GITHUB_USER"], github_token: ENV["GITHUB_TOKEN"]})
-    end
-  end
 end
 
