@@ -102,9 +102,8 @@ module WorkReport
   class CLI < Thor
     desc "github_commits", "Output github commits to csv"
     method_option :github_user
-    method_option :github_token
     def github_commits
-      github_activity = GithubActivity.new(options.github_user, options.github_token)
+      github_activity = GithubActivity.new(options.github_user, nil)
       puts github_activity.commits_to_csv
     end
 
