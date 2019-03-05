@@ -3,6 +3,8 @@ version: '2'
 services:
   app:
     build: .
+    environment:
+      - "GITHUB_TOKEN=${GITHUB_TOKEN}"
     volumes:
       - ".:/var/myapp"
 
