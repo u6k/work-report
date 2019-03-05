@@ -1,33 +1,14 @@
-sudo: required
 language: ruby
+cache: bundler
 
-services:
-  - docker
-
-before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
+addons:
+  apt:
+    packages:
+      - docker-ce
 
 script:
-  - git clean -xdf
-  - mv .env.example .env
-  - docker build -t u6kapps/work-report -f Dockerfile.production .
-  - docker-compose -f docker-compose.production.yml up -d
-  - docker-compose -f docker-compose.production.yml exec app rails db:migrate
-  - docker-compose -f docker-compose.production.yml exec s3 mkdir /export/work-report
-  - docker-compose -f docker-compose.production.yml exec app rails test
-  - docker-compose -f docker-compose.production.yml down -v
-
-after_success:
-  - if [ -n "$TRAVIS_TAG" ]; then
-      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin;
-      docker tag u6kapps/work-report u6kapps/work-report:$TRAVIS_TAG;
-      docker push u6kapps/work-report;
-    else
-      echo skip docker push;
-    fi
+  - docker-compose build
+  - docker-compose run app
 
 notifications:
   slack:

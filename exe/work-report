@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require "work_report"
+
+WorkReport::CLI.start(ARGV)
+
