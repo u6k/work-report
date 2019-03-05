@@ -1,6 +1,7 @@
 require "json"
 require "csv"
 require "open-uri"
+require "thor"
 
 require "work_report/version"
 
@@ -25,6 +26,16 @@ module WorkReport
           "date" => Time.parse(contribution["date"]),
           "count" => contribution["count"]
         }
+      end
+    end
+
+    def commits_to_csv
+      commits = commits_to_hash
+
+      csv = CSV.generate do |line|
+        commits.each do |commit|
+          line << [commit["date"].strftime("%F"), commit["count"]]
+        end
       end
     end
 
@@ -53,6 +64,16 @@ module WorkReport
       end
     end
 
+    def releases_to_csv
+      releases = releases_to_hash
+
+      csv = CSV.generate do |line|
+        releases.each do |release|
+          line << [release["url"], release["name"], release["created_at"].strftime("%F %T")]
+        end
+      end
+    end
+
     private
 
     def get_github_data(url)
@@ -75,6 +96,24 @@ module WorkReport
       end
     
       data
+    end
+  end
+
+  class CLI < Thor
+    desc "github_commits", "Output github commits to csv"
+    method_option :github_user
+    method_option :github_token
+    def github_commits
+      github_activity = GithubActivity.new(options.github_user, options.github_token)
+      puts github_activity.commits_to_csv
+    end
+
+    desc "github_releases", "Output github releases to csv"
+    method_option :github_user
+    method_option :github_token
+    def github_releases
+      github_activity = GithubActivity.new(options.github_user, options.github_token)
+      puts github_activity.releases_to_csv
     end
   end
 end

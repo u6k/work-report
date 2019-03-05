@@ -5,7 +5,7 @@ RSpec.describe WorkReport do
 
   describe WorkReport::GithubActivity do
     before do
-      @github_activity = WorkReport::GithubActivity.new("u6k", ENV["GITHUB_TOKEN"])
+      @github_activity = WorkReport::GithubActivity.new(ENV["GITHUB_USER"], ENV["GITHUB_TOKEN"])
     end
 
     describe "#commits_to_hash" do
@@ -17,6 +17,16 @@ RSpec.describe WorkReport do
         commits.each do |commit|
           expect(commit["date"]).to be_is_a Time
           expect(commit["count"]).to be_integer
+        end
+      end
+    end
+
+    describe "#commits_to_csv" do
+      it "is csv" do
+        csv = @github_activity.commits_to_csv
+
+        csv.each_line do |line|
+          expect(line).to match /^\d{4}-\d{2}-\d{2},\d+$/
         end
       end
     end
@@ -33,6 +43,22 @@ RSpec.describe WorkReport do
           expect(release["created_at"]).to be_is_a Time
         end
       end
+    end
+
+    describe "#releases_to_csv" do
+      it "is csv" do
+        csv = @github_activity.releases_to_csv
+
+        csv.each_line do |line|
+          expect(line).to match /^https:\/\/github\.com\/.+?,.+?,\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+        end
+      end
+    end
+  end
+
+  describe WorkReport::CLI do
+    it "hello" do
+      WorkReport::CLI.new.invoke(:github_commits, [], {github_user: ENV["GITHUB_USER"], github_token: ENV["GITHUB_TOKEN"]})
     end
   end
 end

@@ -4,6 +4,7 @@ services:
   app:
     build: .
     environment:
+      - "GITHUB_USER=${GITHUB_USER}"
       - "GITHUB_TOKEN=${GITHUB_TOKEN}"
     volumes:
       - ".:/var/myapp"
