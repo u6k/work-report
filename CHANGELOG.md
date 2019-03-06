@@ -9,5 +9,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-TODO
-
+- [#6328: GitHubの活動ログを収集する](https://redmine.u6k.me/issues/6328)
+- [#6825: Redmineの活動ログを出力する](https://redmine.u6k.me/issues/6825)
