@@ -55,5 +55,36 @@ RSpec.describe WorkReport do
       end
     end
   end
+
+  describe WorkReport::RedmineActivity do
+    before do
+      @redmine_activity = WorkReport::RedmineActivity.new(ENV["REDMINE_URL"], ENV["REDMINE_API_KEY"], ENV["REDMINE_USER_ID"])
+    end
+
+    describe "#activities_to_hash" do
+      it "is hash" do
+        activities = @redmine_activity.activities_to_hash
+
+        expect(activities.size).to be > 0
+
+        activities.each do |activity|
+          expect(activity["project"]).to match /^.+$/
+          expect(activity["title"]).to match /^.+$/
+          expect(activity["url"]).to match /^http.*$/
+          expect(activity["timestamp"]).to be_is_a Time
+        end
+      end
+    end
+
+    describe "#activities_to_csv" do
+      it "is csv" do
+        csv = @redmine_activity.activities_to_csv
+
+        csv.each_line do |line|
+          expect(line).to match /^.+?,.+?,http.+?,\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+        end
+      end
+    end
+  end
 end
 
