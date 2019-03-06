@@ -167,6 +167,15 @@ module WorkReport
       github_activity = GithubActivity.new(options.github_user, options.github_token)
       puts github_activity.releases_to_csv
     end
+
+    desc "redmine_activities", "Output redmine activities to csv"
+    method_option :redmine_url
+    method_option :redmine_api_key
+    method_option :redmine_user_id
+    def redmine_activities
+      redmine_activity = RedmineActivity.new(options.redmine_url, options.redmine_api_key, options.redmine_user_id)
+      puts redmine_activity.activities_to_csv
+    end
   end
 end
 
