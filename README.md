@@ -51,12 +51,12 @@ Commands:
 
 最新の情報は、 [Wiki - work-report - u6k.Redmine](https://redmine.u6k.me/projects/work-report/wiki) を参照してください。
 
-- [[コンテキスト・モデル]]
-- [[要求・要件]]
-- [[業務フロー]]
-- [[サンプル]]
-- [[ビルド手順]]
-- [[リリース手順]]
+- [コンテキスト・モデル](https://redmine.u6k.me/projects/work-report/wiki/%E3%82%B3%E3%83%B3%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%83%BB%E3%83%A2%E3%83%87%E3%83%AB)
+- [要求・要件](https://redmine.u6k.me/projects/work-report/wiki/%E8%A6%81%E6%B1%82%E3%83%BB%E8%A6%81%E4%BB%B6)
+- [業務フロー](https://redmine.u6k.me/projects/work-report/wiki/%E6%A5%AD%E5%8B%99%E3%83%95%E3%83%AD%E3%83%BC)
+- [サンプル](https://redmine.u6k.me/projects/work-report/wiki/%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB)
+- [ビルド手順](https://redmine.u6k.me/projects/work-report/wiki/%E3%83%93%E3%83%AB%E3%83%89%E6%89%8B%E9%A0%86)
+- [リリース手順](https://redmine.u6k.me/projects/work-report/wiki/%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E6%89%8B%E9%A0%86)
 
 ## API
 
