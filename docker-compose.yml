@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  app:
+    build: .
+    environment:
+      - "GITHUB_USER=${GITHUB_USER}"
+      - "GITHUB_TOKEN=${GITHUB_TOKEN}"
+      - "REDMINE_URL=${REDMINE_URL}"
+      - "REDMINE_API_KEY=${REDMINE_API_KEY}"
+      - "REDMINE_USER_ID=${REDMINE_USER_ID}"
+    volumes:
+      - ".:/var/myapp"
+
